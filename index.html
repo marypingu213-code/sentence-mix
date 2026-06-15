@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>國小國語短語與句型辨析挑戰 - 語文積木版</title>
+    <!-- 使用 Tailwind CSS 加速精美 UI 設計 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts 中文字型 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Fredoka One', sans-serif;
+            background-color: #f0fdf4; /* 輕柔的大自然粉綠底色，保護眼睛 */
+        }
+        .bouncy-btn {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .bouncy-btn:hover {
+            transform: scale(1.05);
+        }
+        .bouncy-btn:active {
+            transform: scale(0.95);
+        }
+        /* 隱藏原生滾動條，維持美觀 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0fdf4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 9999px;
+        }
+        
+        /* 震動與滾動特效 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+        .animate-shake {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        /* 獎狀列印樣式專用 */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #print-area, #print-area * {
+                visibility: visible;
+            }
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-700">
+
+    <header class="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-white shadow-lg py-4 px-6 relative sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            
+            <!-- Logo 與標題 -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+                <div class="bg-white/30 p-2 rounded-2xl backdrop-blur-sm">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-black text-xl tracking-wider md:text-2xl">國語積木大冒險</h1>
+                    <p class="text-xs text-emerald-50 opacity-90">國小短語與句型結構辨析</p>
+                </div>
+            </div>
+            
+            <!-- 左右拉切換按鈕，對應 image_bbc7ec.jpg 中標記的 LEVEL SELECTOR -->
+            <div class="flex items-center bg-white/10 px-4 py-2 rounded-2xl border border-white/20 shadow-inner gap-4">
+                <div class="text-right">
+                    <span class="text-[10px] text-emerald-100 block font-bold tracking-wider">LEVEL SELECTOR</span>
+                    <div id="slot-display" class="font-black text-base text-yellow-100 tracking-wide transition-all duration-300">
+                        🌱 中低年級組
+                    </div>
+                </div>
+                
+                <!-- 直覺式左右滑動切換開關 (左右拉開關) -->
+                <div class="relative w-[140px] h-8 bg-slate-900/50 rounded-full p-1 flex items-center cursor-pointer select-none shadow-inner border border-slate-700/50">
+                    <!-- 滑塊背景 -->
+                    <div id="toggle-slider" class="absolute w-[64px] h-6 bg-emerald-400 rounded-full transition-all duration-300 ease-out shadow-md"></div>
+                    <!-- 點擊覆蓋觸發區 -->
+                    <div class="absolute inset-0 flex z-20">
+                        <div class="w-1/2 h-full cursor-pointer" onclick="setGrade('low-mid')"></div>
+                        <div class="w-1/2 h-full cursor-pointer" onclick="setGrade('high')"></div>
+                    </div>
+                    <!-- 標籤文字 -->
+                    <div class="absolute inset-0 flex justify-between items-center px-3.5 text-[11px] font-black pointer-events-none z-10">
+                        <span id="label-low-mid" class="text-slate-900 transition-colors duration-300">🌱中低</span>
+                        <span id="label-high" class="text-white transition-colors duration-300">🌲高年</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 吉祥物與導覽按鈕 -->
+            <div class="flex items-center space-x-3">
+                <nav class="hidden lg:flex space-x-1.5">
+                    <button onclick="goHome()" class="px-3.5 py-1.5 rounded-full font-bold text-xs bg-white/20 hover:bg-white/35 transition text-white">🏠 首頁</button>
+                    <button onclick="switchScreen('study')" class="px-3.5 py-1.5 rounded-full font-bold text-xs hover:bg-white/20 transition text-white">📖 學習大本營</button>
+                    <button onclick="startQuiz('all')" class="px-3.5 py-1.5 rounded-full font-bold text-xs bg-amber-400 hover:bg-amber-300 transition text-slate-800 shadow-md">🎮 開始挑戰</button>
+                </nav>
+                <div class="relative group cursor-pointer" onclick="triggerMascotTip()">
+                    <div class="absolute -inset-1 rounded-full bg-yellow-300 animate-pulse blur opacity-40"></div>
+                    <div class="relative bg-white text-2xl w-10 h-10 rounded-full flex items-center justify-center shadow-md">🦉</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="mascot-toast" class="fixed top-20 right-4 bg-white border-2 border-emerald-300 rounded-2xl shadow-xl p-4 max-w-xs transition-all transform scale-0 translate-y-[-20px] opacity-0 z-50 duration-300">
+        <div class="flex items-start space-x-3">
+            <span class="text-2xl">🦉</span>
+            <div>
+                <h4 class="font-bold text-emerald-600 text-sm">小書鴞精靈：</h4>
+                <p id="mascot-msg" class="text-xs text-slate-600 mt-1 leading-relaxed">點擊右上角的開關，左右滑動就能快速切換年級段囉！</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要內容區 -->
+    <main class="flex-grow p-4 md:p-8 max-w-5xl w-full mx-auto">
+        
+        <section id="screen-home" class="space-y-8 animate-fade-in">
+            <!-- 橫幅介紹：已根據 image_bbc02a.jpg 刪除年段徽章、大標題及右側積木插圖 -->
+            <div class="bg-gradient-to-br from-white to-emerald-50 rounded-3xl p-6 md:p-10 border border-emerald-100 shadow-xl flex flex-col items-center justify-center text-center gap-6">
+                <div class="space-y-5 max-w-2xl">
+                    <p class="text-slate-600 leading-relaxed text-sm md:text-base">
+                        這是一個專為國小同學打造的語文學習世界！你可以利用右上角的「年段切換開關」切換中低年級或高年級。點擊「學習大本營」研讀例句，再進入挑戰爭取 100 分榮譽獎狀吧！
+                    </p>
+                    <div class="flex flex-wrap gap-4 justify-center pt-2">
+                        <button onclick="switchScreen('study')" class="bouncy-btn bg-emerald-500 text-white font-black px-6 py-3 rounded-2xl shadow-lg shadow-emerald-200 hover:bg-emerald-600 flex items-center space-x-2">
+                            <span>📖 學習大本營</span>
+                        </button>
+                        <button onclick="startQuiz('all')" class="bouncy-btn bg-amber-400 text-slate-800 font-black px-6 py-3 rounded-2xl shadow-lg shadow-amber-200 hover:bg-amber-300 flex items-center space-x-2">
+                            <span>🏆 綜合全能挑戰</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- 短語練習入口 -->
+                <div class="bg-white rounded-3xl p-6 border-2 border-emerald-100 hover:border-emerald-300 shadow-md hover:shadow-xl transition duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="text-4xl mb-4">🧩</div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">短語結構挑戰</h3>
+                        <p id="phrase-intro-text" class="text-slate-500 text-sm mb-4 leading-relaxed">
+                            「一抹又一抹迷人的藍」、「好小好小的海馬」，從字彙積木與疊字量詞，發現詞性與重疊字的完美搭配。
+                        </p>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <span id="phrase-count-badge" class="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2.5 py-1 rounded-md">共 12 組經典結構</span>
+                        <button onclick="startQuiz('phrase')" class="bouncy-btn px-4 py-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-xl font-bold text-sm">開始測驗 →</button>
+                    </div>
+                </div>
+
+                <!-- 句型練習入口 -->
+                <div class="bg-white rounded-3xl p-6 border-2 border-emerald-100 hover:border-emerald-300 shadow-md hover:shadow-xl transition duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="text-4xl mb-4">💡</div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">句型關卡挑戰</h3>
+                        <p id="sentence-intro-text" class="text-slate-500 text-sm mb-4 leading-relaxed">
+                            「自從…就…」、「是…還是…」、「不僅…也…」，在生活化句子中靈活運用連接詞黏著劑。
+                        </p>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <span id="sentence-count-badge" class="text-xs text-teal-600 font-semibold bg-teal-50 px-2.5 py-1 rounded-md">共 12 組生活句型</span>
+                        <button onclick="startQuiz('sentence')" class="bouncy-btn px-4 py-2 bg-teal-100 text-teal-700 hover:bg-teal-200 rounded-xl font-bold text-sm">開始測驗 →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-study" class="hidden space-y-6 animate-fade-in">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-emerald-100 pb-4">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-800 flex items-center">
+                        <span class="mr-2 text-3xl">📖</span> 學習手冊與閃卡
+                    </h2>
+                    <p class="text-slate-500 text-xs mt-1">請利用右上角「滑動開關」切換年段。點擊下方卡片展開查看專屬結構與生動例句！</p>
+                </div>
+                <!-- 篩選切換鈕 -->
+                <div class="flex space-x-2 bg-emerald-100/50 p-1.5 rounded-2xl border border-emerald-200/50">
+                    <button id="btn-filter-phrase" onclick="filterStudy('phrase')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-500 text-white shadow-md">🧩 短語結構</button>
+                    <button id="btn-filter-sentence" onclick="filterStudy('sentence')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all text-emerald-700 hover:bg-emerald-100">💡 生活句型</button>
+                </div>
+            </div>
+
+            <!-- 卡片容器 -->
+            <div id="study-cards-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- JavaScript 動態填入 -->
+            </div>
+        </section>
+
+        <section id="screen-quiz" class="hidden max-w-3xl mx-auto space-y-6 animate-fade-in">
+            <!-- 頂部進度條與生命值 -->
+            <div class="bg-white rounded-2xl p-4 border border-emerald-100 shadow-md flex justify-between items-center">
+                <div class="flex-grow mr-6">
+                    <div class="flex justify-between text-xs text-slate-500 mb-1.5">
+                        <span class="font-bold text-emerald-600" id="quiz-progress-label">第 1 / 12 題</span>
+                        <span id="quiz-percentage-label">完成 8%</span>
+                    </div>
+                    <!-- 進度槽 -->
+                    <div class="w-full h-3 bg-emerald-50 rounded-full overflow-hidden border border-emerald-100">
+                        <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-emerald-400 to-teal-400 transition-all duration-300" style="width: 8%"></div>
+                    </div>
+                </div>
+                <!-- 計分板 -->
+                <div class="flex items-center space-x-2 bg-amber-50 px-3.5 py-1.5 rounded-xl border border-amber-200">
+                    <span class="text-lg">⭐</span>
+                    <span id="live-score" class="font-black text-amber-600 text-base">00</span>
+                </div>
+            </div>
+
+            <!-- 題目主板 -->
+            <div class="bg-gradient-to-b from-white to-emerald-50/20 rounded-3xl p-6 md:p-8 border-2 border-emerald-100 shadow-xl relative overflow-hidden">
+                <!-- 題型小徽章 -->
+                <span id="quiz-badge" class="absolute top-4 right-4 bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full">短語結構</span>
+                
+                <div class="space-y-4 pt-4">
+                    <div class="flex items-start space-x-2">
+                        <span class="bg-emerald-500 text-white font-black text-sm rounded-lg w-6 h-6 flex items-center justify-center shrink-0 mt-1">問</span>
+                        <h3 id="quiz-question" class="text-lg md:text-xl font-bold text-slate-800 leading-relaxed">和例句「一抹又一抹迷人的藍」結構不同的是？</h3>
+                    </div>
+                </div>
+
+                <!-- 選項區 -->
+                <div id="quiz-options-container" class="grid gap-3 mt-6">
+                    <!-- 選項將透過 JavaScript 動態生成 -->
+                </div>
+            </div>
+
+            <!-- 解析與下一題回饋區 (預設隱藏，答題後秀出) -->
+            <div id="feedback-panel" class="hidden bg-white border-2 rounded-2xl p-5 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300">
+                <div class="flex items-start space-x-3">
+                    <span id="feedback-icon" class="text-3xl">🎉</span>
+                    <div>
+                        <h4 id="feedback-title" class="font-black text-base">答對了！太棒了！</h4>
+                        <p id="feedback-desc" class="text-xs text-slate-500 mt-1 leading-relaxed">解析內容</p>
+                    </div>
+                </div>
+                <button id="btn-next-question" onclick="nextQuestion()" class="bouncy-btn shrink-0 w-full md:w-auto px-6 py-3 bg-emerald-500 text-white font-black rounded-xl shadow-md hover:bg-emerald-600 transition">
+                    下一題 🐾
+                </button>
+            </div>
+        </section>
+
+        <section id="screen-result" class="hidden max-w-3xl mx-auto space-y-8 animate-fade-in">
+            <!-- 成績與表現 -->
+            <div class="bg-white rounded-3xl p-8 border-2 border-emerald-100 shadow-xl text-center space-y-6">
+                <div class="relative inline-block">
+                    <!-- 皇冠 -->
+                    <span id="result-medal-emoji" class="text-6xl md:text-7xl block animate-bounce">🏆</span>
+                </div>
+                <div class="space-y-2">
+                    <h2 id="result-title" class="text-2xl md:text-3xl font-black text-slate-800">超級國語小達人！</h2>
+                    <p class="text-slate-500 text-sm">你完成了本次的所有挑戰，來看看你的成績報告單吧！</p>
+                </div>
+
+                <!-- 分數指標卡 -->
+                <div class="grid grid-cols-3 gap-3 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100">
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block">總得分</span>
+                        <strong id="result-score" class="text-2xl md:text-3xl font-black text-emerald-600">100</strong>
+                    </div>
+                    <div class="text-center border-x border-emerald-100">
+                        <span class="text-xs text-slate-400 block">答對題數</span>
+                        <strong id="result-correct-count" class="text-2xl md:text-3xl font-black text-teal-600">12 / 12</strong>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block">答題準確率</span>
+                        <strong id="result-accuracy" class="text-2xl md:text-3xl font-black text-amber-600">100%</strong>
+                    </div>
+                </div>
+
+                <!-- 名字輸入與生成獎狀區域 -->
+                <div id="cert-input-area" class="bg-amber-50/50 rounded-2xl p-5 border border-amber-200 text-left space-y-3">
+                    <label for="student-name" class="block font-bold text-slate-700 text-sm flex items-center">
+                        <span class="mr-1.5">✍️</span> 請輸入你的大名來領取精美獎狀：
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" id="student-name" placeholder="例如：王小明" maxlength="10" class="flex-grow px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:outline-none text-sm" />
+                        <button onclick="generateCertificate()" class="bouncy-btn px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-800 font-black rounded-xl shadow-md text-sm">生成證書</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 列印區 -->
+            <div id="print-area" class="hidden bg-white rounded-3xl p-8 md:p-12 border-[8px] border-double border-amber-400 shadow-xl max-w-2xl mx-auto relative overflow-hidden bg-[radial-gradient(#fef3c7_1px,transparent_1px)] [background-size:16px_16px]">
+                <!-- 四角花紋裝飾 -->
+                <div class="absolute top-4 left-4 text-amber-500 font-bold text-xl">✦</div>
+                <div class="absolute top-4 right-4 text-amber-500 font-bold text-xl">✦</div>
+                <div class="absolute bottom-4 left-4 text-amber-500 font-bold text-xl">✦</div>
+                <div class="absolute bottom-4 right-4 text-amber-500 font-bold text-xl">✦</div>
+
+                <div class="text-center space-y-6">
+                    <span class="text-4xl">👑</span>
+                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest text-amber-600">榮譽證書</h1>
+                    <div class="w-24 h-1 bg-amber-400 mx-auto rounded-full"></div>
+                    
+                    <p class="text-slate-700 text-base md:text-lg leading-relaxed text-left max-w-md mx-auto py-4">
+                        親愛的 <strong id="cert-name" class="text-xl md:text-2xl text-emerald-600 border-b-2 border-emerald-400 px-2">王小明</strong> 同學：<br><br>
+                        恭喜你在「<strong class="text-slate-800">國語積木大冒險：短語與句型辨析挑戰</strong>」中展現驚人天賦，獲得總分 <strong id="cert-score" class="text-xl text-amber-600">100分</strong> 的極優異成績！<br>
+                        特頒此證，以茲鼓勵，期許你未來能靈活運用這些美麗的文字積木，成為寫作大師！
+                    </p>
+
+                    <div class="flex justify-between items-end pt-8 text-xs text-slate-400 max-w-md mx-auto">
+                        <div class="text-left">
+                            <p>認證機構：國語小精靈魔法部</p>
+                            <p id="cert-date">發證日期：2026/06/15</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-3xl">🦉</span>
+                            <p class="font-bold text-emerald-600 text-[10px] mt-1">小書鴞精靈 推薦蓋章</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作與返回按鈕 -->
+            <div class="flex flex-wrap gap-4 justify-center">
+                <button id="btn-print" onclick="window.print()" class="hidden bouncy-btn px-6 py-3 bg-teal-500 text-white font-black rounded-2xl shadow-lg shadow-teal-100 flex items-center space-x-2">
+                    <span>🖨️ 列印此精美獎狀</span>
+                </button>
+                <button onclick="goHome()" class="bouncy-btn px-6 py-3 bg-slate-200 text-slate-700 hover:bg-slate-300 font-black rounded-2xl">
+                    🏠 返回大廳
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="bg-slate-100 border-t border-slate-200 py-6 px-6 text-center text-xs text-slate-400 mt-12">
+        <div class="max-w-5xl mx-auto space-y-2">
+            <p>💡 國語短語與句型精美生活短文練習網頁・國小語文課外教學輔助系統</p>
+            <p>© 2026 國語積木大冒險. 本系統內建 Web Audio API 免外部連結，音效安全合規。</p>
+        </div>
+    </footer>
+
+    <!-- 全螢幕紙花 Canvas -->
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50 w-full h-full hidden"></canvas>
+
+    <script>
+        // 短語練習資料庫
+        const PHRASE_DATA = [
+            // ================= 中低年級組 (low-mid) =================
+            {
+                id: "lp1",
+                grade: "low-mid",
+                example: "一抹又一抹迷人的藍",
+                structure: "疊字量詞 ＋ 又 ＋ 疊字量詞 ＋ 雙字形容詞 ＋ 的 ＋ 核心名詞",
+                options: ["一陣又一陣刺耳的風", "一朵又一朵潔白的雲", "一條又一條活潑的魚", "慢慢的走在公園裡"],
+                answer: "慢慢的走在公園裡",
+                desc: "「一抹又一抹迷人的藍」結構是【疊字量詞＋又＋疊字量詞＋形容詞＋的＋名詞】。「慢慢的走在公園裡」是副詞搭配動詞片語，結構不同。"
+            },
+            {
+                id: "lp2",
+                grade: "low-mid",
+                example: "一座座雪白的鹽山",
+                structure: "疊字量詞 ＋ 顏色或雙字形容詞 ＋ 的 ＋ 核心名詞",
+                options: ["一朵朵金黃的花兒", "一片片翠綠的草地", "一隻一隻漆黑的螞蟻", "開心的唱歌跳舞"],
+                answer: "開心的唱歌跳舞",
+                desc: "「一座座雪白的鹽山」為【疊字量詞＋形容詞＋的＋名詞】。而「開心的唱歌跳舞」是【副詞＋的＋動詞】，結構不同。"
+            },
+            {
+                id: "lp3",
+                grade: "low-mid",
+                example: "高高遠遠的雲霄",
+                structure: "AABB疊字形容詞 ＋ 的 ＋ 核心名詞",
+                options: ["漂漂亮亮的花朵", "大大小小的貝殼", "平平整整的馬路", "非常高興的唱歌"],
+                answer: "非常高興的唱歌",
+                desc: "「高高遠遠的雲霄」結構是【AABB疊字形容詞＋的＋名詞】。「非常高興的唱歌」是副詞修飾動詞，結構不同。"
+            },
+            {
+                id: "lp4",
+                grade: "low-mid",
+                example: "看看漂亮的珊瑚",
+                structure: "AA疊字動詞 ＋ 雙字形容詞 ＋ 的 ＋ 核心名詞",
+                options: ["聽聽美妙的音樂", "拍拍可愛的皮球", "畫畫美麗的彩虹", "高大茂密的森林"],
+                answer: "高大茂密的森林",
+                desc: "「看看漂亮的珊瑚」結構是【AA疊字動詞＋形容詞＋的＋名詞】。而「高大茂密的森林」純粹是【形容詞＋名詞】，缺少最前方的疊字動詞。"
+            },
+            {
+                id: "lp5",
+                grade: "low-mid",
+                example: "黑得發亮的叔叔",
+                structure: "單字形容詞 ＋ 得 ＋ 動補形容詞（發亮、冒汗等） ＋ 的 ＋ 核心名詞",
+                options: ["紅得發紫的蘋果", "熱得冒汗的妹妹", "累得發抖的選手", "一座高大的城堡"],
+                answer: "一座高大的城堡",
+                desc: "「黑得發亮的叔叔」是【形容詞＋得＋形容詞＋的＋名詞】的程度補語結構。而「一座高大的城堡」是【量詞＋形容詞＋名詞】，結構不同。"
+            },
+            {
+                id: "lp6",
+                grade: "low-mid",
+                example: "好小好小的海馬",
+                structure: "好 ＋ 單字形容詞 ＋ 好 ＋ 單字形容詞 ＋ 的 ＋ 核心名詞",
+                options: ["好大好大的西瓜", "好冷好冷的冬天", "好甜好甜的蘋果", "開心的跑來跑去"],
+                answer: "開心的跑來跑去",
+                desc: "「好小好小的海馬」是表示強調的【好A好A的＋名詞】結構。「開心的跑來跑去」是【副詞＋的＋動詞片語】，結構不同。"
+            },
+            {
+                id: "lp7",
+                grade: "low-mid",
+                example: "神奇又漂亮的海底世界",
+                structure: "雙字形容詞 ＋ 又 ＋ 雙字形容詞 ＋ 的 ＋ 複合名詞",
+                options: ["乾淨又整齊的書桌", "香甜又可口的蛋糕", "聰明又活潑的妹妹", "一隻一隻的小鴨"],
+                answer: "一隻一隻的小鴨",
+                desc: "「神奇又漂亮的海底世界」是並列形容詞【A又B的＋名詞】結構。「一隻一隻的小鴨」是疊字量詞結構，故不同。"
+            },
+            {
+                id: "lp8",
+                grade: "low-mid",
+                example: "走在一條綠色隧道裡",
+                structure: "動詞 ＋ 在 ＋ 數量詞 ＋ 顏色/形容詞 ＋ 名詞 ＋ 空間方位詞(裡/上/外)",
+                options: ["躺在一張柔軟床舖上", "坐在一輛紅色汽車裡", "躲在一棵巨大樹木後", "快樂的在操場跑步"],
+                answer: "快樂的在操場跑步",
+                desc: "「走在一條綠色隧道裡」是【動詞＋在＋數量形容詞＋名詞＋方位詞】。而「快樂的在操場跑步」缺少了核心數量詞及方位框限，結構不同。"
+            },
+            {
+                id: "lp9",
+                grade: "low-mid",
+                example: "雨水不停的沖刷岩石和泥土",
+                structure: "主名詞 ＋ 副詞 ＋ 的 ＋ 主要動詞 ＋ 名詞 ＋ 和 ＋ 名詞",
+                options: ["微風輕輕的吹拂樹葉和花朵", "太陽溫暖的照耀高山和河流", "海水無情的拍打沙灘 and 礁石", "一個個美味的蘋果和香蕉"],
+                answer: "一個個美味的蘋果和香蕉",
+                desc: "「雨水不停的沖刷岩石和泥土」是完整的短敘述【主詞＋副詞的＋動詞＋並列受詞】。「一個個美味的蘋果和香蕉」是名詞片語，沒有動詞。"
+            },
+            {
+                id: "lp10",
+                grade: "low-mid",
+                example: "枯木是動物們的大飯店",
+                structure: "主詞 ＋ 是 ＋ 名詞複數(們) ＋ 的 ＋ 隱喻名詞",
+                options: ["森林是小鳥們的遊樂園", "學校是學生們的知識庫", "地球是人類們的大家庭", "我們開心的在教室上課"],
+                answer: "我們開心的在教室上課",
+                desc: "「枯木是動物們的大飯店」是【A是B們的C】結構的隱喻判斷句。「我們開心的在教室上課」是一般的主謂動作句，結構不同。"
+            },
+            {
+                id: "lp11",
+                grade: "low-mid",
+                example: "突如其來的烙下",
+                structure: "四字形容詞(成語) ＋ 的 ＋ 動作動詞",
+                options: ["輕而易舉的完成", "莫名其妙的哭泣", "出乎意料的贏得", "一隻可愛的小狗"],
+                answer: "一隻可愛的小狗",
+                desc: "「突如其來的烙下」是【四字副詞修飾＋的＋動詞】。「一隻可愛的小狗」則是【量詞＋形容詞＋名詞】，結構完全不同。"
+            },
+            {
+                id: "lp12",
+                grade: "low-mid",
+                example: "別具特色的騎樓",
+                structure: "四字形容詞(成語) ＋ 的 ＋ 核心名詞",
+                options: ["引人入勝的故事", "五顏六色的氣球", "千變萬化的白雲", "大聲的唱歌跳舞"],
+                answer: "大聲的唱歌跳舞",
+                desc: "「別具特色的騎樓」是【四字修飾語＋的＋名詞】。而「大聲的唱歌跳舞」是【副詞的＋並列動詞】，結構不同。"
+            },
+
+            // ================= 高年級組 (high) =================
+            {
+                id: "p1",
+                grade: "high",
+                example: "窗前那棵魁梧的樹",
+                structure: "位置說明 ＋ 量詞 ＋ 四字或雙字形容詞 ＋ 核心名詞",
+                options: ["桌上那本厚重的書", "牆角那隻可愛的貓", "操場那個奔跑的身影", "非常快速的奔跑"],
+                answer: "非常快速的奔跑",
+                desc: "「窗前那棵魁梧的樹」結構是【方位＋量詞＋形容詞＋名詞】。而「非常快速的奔跑」是【副詞＋形容詞＋的＋動詞】，故結構不同。"
+            },
+            {
+                id: "p2",
+                grade: "high",
+                example: "一枚絢麗多姿的葉子",
+                structure: "單位量詞 ＋ 四字形容詞（成語） ＋ 的 ＋ 核心名詞",
+                options: ["一朵五彩繽紛的花朵", "一個美味可口的蛋糕", "一雙乾淨整潔的球鞋", "慢慢的走回家"],
+                answer: "慢慢的走回家",
+                desc: "「一枚絢麗多姿的葉子」為【量詞＋四字形容詞＋的＋名詞】。而「慢慢的走回家」是【疊字副詞＋的＋動詞短語】，故結構不同。"
+            },
+            {
+                id: "p3",
+                grade: "high",
+                example: "重重的倒在我的腿上",
+                structure: "疊字副詞 ＋ 的 ＋ 動詞 ＋ 在我的 ＋ 方位名詞 ＋ 上/裡",
+                options: ["輕輕的貼在我的臉上", "靜靜的躺在我的床上", "緩緩的落在我的肩膀上", "快樂的唱著歌"],
+                answer: "快樂的唱著歌",
+                desc: "「重重的倒在我的腿上」是【疊字副詞＋的＋動詞＋在我的＋名詞＋上】。而「快樂的唱著歌」沒有方位補語與指定代名詞，故結構不同。"
+            },
+            {
+                id: "p4",
+                grade: "high",
+                example: "火車規律的搖擺",
+                structure: "主詞名詞 ＋ 副詞 ＋ 的 ＋ 動詞",
+                options: ["鬧鐘準時的響起", "貓咪調皮的玩耍", "老師溫柔的微笑", "綠油油的小草"],
+                answer: "綠油油的小草",
+                desc: "「火車規律的搖擺」結構是【名詞＋副詞＋的＋動詞】。而「綠油油的小草」是【疊字形容詞＋的＋名詞】，故結構不同。"
+            },
+            {
+                id: "p5",
+                grade: "high",
+                example: "揮汗如雨的練習",
+                structure: "四字副詞（成語） ＋ 的 ＋ 動詞/動名詞",
+                options: ["專心致志的讀書", "全力以赴的跑步", "同心協力的合作", "漂亮的洋娃娃"],
+                answer: "漂亮的洋娃娃",
+                desc: "「揮汗如雨的練習」為【四字副詞＋的＋動詞】。而「漂亮的洋娃娃」為【一般形容詞＋的＋名詞】，故結構不同。"
+            },
+            {
+                id: "p6",
+                grade: "high",
+                example: "誇張的肢體動作和表情",
+                structure: "形容詞 ＋ 的 ＋ 名詞 ＋ 和 ＋ 名詞（並列名詞）",
+                options: ["豐富的營養晚餐和水果", "精采的魔術表演和遊戲", "乾淨的教室環境和走廊", "大聲的唱歌和跳舞"],
+                answer: "大聲的唱歌和跳舞",
+                desc: "「誇張的肢體動作和表情」為【形容詞＋的＋名詞＋和＋名詞】。而「大聲的唱歌和跳舞」中「唱歌」與「跳舞」為動詞短語，故結構不同。"
+            },
+            {
+                id: "p7",
+                grade: "high",
+                example: "廣闊連綿的沙漠地帶",
+                structure: "四字形容詞 ＋ 的 ＋ 複合名詞",
+                options: ["高聳雄偉的翠綠高山", "清澈見底的溪流步道", "蔚藍無邊的美麗大海", "太陽溫慢的照耀大地"],
+                answer: "太陽溫慢的照耀大地",
+                desc: "「廣闊連綿的沙漠地帶」是【四字形容詞＋的＋複合名詞】。而「太陽溫慢的照耀大地」是【主詞＋副詞＋動詞＋受詞】的完整句子，故結構不同。"
+            },
+            {
+                id: "p8",
+                grade: "high",
+                example: "一波一波的彩色遮陽傘",
+                structure: "疊字量詞 ＋ 的 ＋ 形容詞 ＋ 核心名詞",
+                options: ["一陣一陣的香甜爆米花", "一朵一朵的潔白雲朵", "一件一件的乾淨衣服", "很高很遠的藍色天空"],
+                answer: "很高很遠的藍色天空",
+                desc: "「一波一波的彩色遮陽傘」是【疊字量詞＋的＋形容詞＋名詞】。而「很高很遠的藍色天空」為【形容詞並列＋名詞】，不含量詞，故結構不同。"
+            },
+            {
+                id: "p9",
+                grade: "high",
+                example: "沒有被燥熱和乾旱擊倒",
+                structure: "否定副詞 ＋ 被 ＋ 名詞 ＋ 和 ＋ 名詞 ＋ 動詞/動補結構",
+                options: ["沒有被困難和挫折打敗", "沒有被風雨和寒冷阻擋", "沒有被功課和考試壓垮", "已經把功課和書包寫好"],
+                answer: "已經把功課和書包寫好",
+                desc: "「沒有被燥熱和乾旱擊倒」是【否定＋被字句＋並列名詞＋動詞】。而「已經把功課和書包寫好」是【肯定時間副詞＋把字句】，故結構不同。"
+            },
+            {
+                id: "p10",
+                grade: "high",
+                example: "花費大量的人力和物力",
+                structure: "主要動詞 ＋ 數量形容詞 ＋ 的 ＋ 名詞 ＋ 和 ＋ 名詞",
+                options: ["消耗大量的時間 and 精力", "準備大量的食物和飲料", "收集大量的資料和圖片", "慢慢累積豐富的經驗"],
+                answer: "慢慢累積豐富的經驗",
+                desc: "「花費大量的人力和物力」是【動詞＋形容詞＋名詞＋和＋名詞】。而「慢慢累積豐富的經驗」沒有並列連接詞「和」，且首字為副詞，故結構不同。"
+            },
+            {
+                id: "p11",
+                grade: "high",
+                example: "一支紀律嚴整的軍隊",
+                structure: "數量詞 ＋ 四字形容詞 ＋ 的 ＋ 團體名詞",
+                options: ["一個團結合作的班級", "一間乾淨明亮的教室", "一群熱情活潑的學生", "一直朝著目標奔跑"],
+                answer: "一直朝著目標奔跑",
+                desc: "「一支紀律嚴整的軍隊」是【量詞＋四字形容詞＋的＋名詞】。而「一直朝著目標奔跑」是【副詞修飾動詞短語】，故結構不同。"
+            },
+            {
+                id: "p12",
+                grade: "high",
+                example: "吸引人們前往探索",
+                structure: "動詞 ＋ 受詞（兼語） ＋ 趨向動作",
+                options: ["鼓勵學生認真學習", "陪伴家人出外踏青", "提醒大家注意安全", "爸爸高興的去上班"],
+                answer: "爸爸高興的去上班",
+                desc: "「吸引人們前往探索」屬於【動詞＋名詞＋前往/去做某事（兼語句）】。而「爸爸高興的去上班」是一般的主謂句，故結構不同。"
+            }
+        ];
+
+        const SENTENCE_DATA = [
+            // ================= 中低年級組 (low-mid) =================
+            {
+                id: "ls1",
+                grade: "low-mid",
+                example: "自從開始下大雨，弟弟就不能去公園玩了。",
+                pattern: "自從…就…",
+                relation: "時間/條件關聯句",
+                options: [
+                    "自從搬了新家，我就擁有了自己獨立的房間。",
+                    "自從養了這隻小狗，妹妹就變得更有愛心了。",
+                    "自從學會游泳之後，哥哥就每天期待夏天的到來。",
+                    "因為今天下大雨，所以我只好帶雨傘出門。"
+                ],
+                answer: "因為今天下大雨，所以我只好帶雨傘出門。",
+                desc: "例句是表示時間起點引發結果的「自從…就…」句型。「因為...所以...」是因果關係，所以句型不同。"
+            },
+            {
+                id: "ls2",
+                grade: "low-mid",
+                example: "姐姐一直寫到晚上九點，才把功課寫完。",
+                pattern: "一直…才…",
+                relation: "時間承接關係",
+                options: [
+                    "弟弟一直玩到媽媽大喊，才不情願的開始讀書。",
+                    "小明一直走到校門口，才發現自己忘記帶便當盒。",
+                    "我們一直走到山頂，才看見美麗的金色夕陽。",
+                    "除了香甜的水蜜桃，我還很喜歡吃西瓜。"
+                ],
+                answer: "除了香甜的水蜜桃，我還很喜歡吃西瓜。",
+                desc: "例句表示持續某動作直到特定時間點的「一直…才…」句型。而「除了...還...」是遞進關係，故不同。"
+            },
+            {
+                id: "ls3",
+                grade: "low-mid",
+                example: "這隻貓咪很溫馨可愛，而且非常愛乾淨。",
+                pattern: "…而且…",
+                relation: "遞進關係",
+                options: [
+                    "這家餐廳的便當很好吃，而且價錢非常便宜。",
+                    "我的哥哥會彈鋼琴，而且會畫漂亮的油畫。",
+                    "今天的陽光很溫暖，而且風吹起來很涼快。",
+                    "如果明天不下雨，我們就在草地上野餐。"
+                ],
+                answer: "如果明天不下雨，我們就在草地上野餐。",
+                desc: "例句是表示進一步說明的遞進句型「…而且…」。而「如果...就...」是假設關係句型，故不同。"
+            },
+            {
+                id: "ls4",
+                grade: "low-mid",
+                example: "小明很想去露營，今天卻突然發燒了。",
+                pattern: "…卻…",
+                relation: "轉折關係",
+                options: [
+                    "妹妹很想吃冰淇淋，媽媽卻說她今天咳嗽不能吃。",
+                    "這道數學題目看起來很簡單，我卻怎麼也算不出來。",
+                    "他雖然年紀還很小，做起事情來卻非常細心。",
+                    "你一邊開心地吃著餅乾，一邊看著電視。"
+                ],
+                answer: "你一邊開心地吃著餅乾，一邊看著電視。",
+                desc: "例句是表示事與願違的轉折句型「…卻…」。而「一邊...一邊...」是同時進行的並列關係，故不同。"
+            },
+            {
+                id: "ls5",
+                grade: "low-mid",
+                example: "這道菜看起來很好吃，不過有一點點辣。",
+                pattern: "…不過…",
+                relation: "輕微轉折關係",
+                options: [
+                    "我很想去室外游泳，不過今天游泳池沒有開放。",
+                    "這支藍色的鋼筆很好看，不過價錢有一點點貴。",
+                    "今天的遠足活動很好玩，不過走得大家腳都很酸。",
+                    "我們在公車站排隊上車，接著找好位置坐下。"
+                ],
+                answer: "我們在公車站排隊上車，接著找好位置坐下。",
+                desc: "例句是表示補充或修正前言的「…不過…」轉折句型。而「接著」是表示動作先後的承接句型。"
+            },
+            {
+                id: "ls6",
+                grade: "low-mid",
+                example: "我們把功課寫完，再來吃香甜的蛋糕。",
+                pattern: "…再…",
+                relation: "承接/條件關係",
+                options: [
+                    "請你先洗乾淨雙手，再來吃桌上美味的麵包。",
+                    "我們要先仔細檢查考卷，再把試卷交給老師。",
+                    "我們先把房間整理乾淨，再出去外面玩球。",
+                    "即使外面天氣很冷，他還是每天早起慢跑。"
+                ],
+                answer: "即使外面天氣很冷，他還是每天早起慢跑。",
+                desc: "例句是表示「先…再…」的順序承接關係。而「即使...還是...」是讓步轉折關係，故不同。"
+            },
+            {
+                id: "ls7",
+                grade: "low-mid",
+                example: "這支筆是你的，還是小華的？",
+                pattern: "是…還是…",
+                relation: "選擇關係",
+                options: [
+                    "你今天晚上想吃香香的炒飯，還是想吃大滷麵？",
+                    "這個漂亮的洋娃娃是聖誕禮物，還是你的生日禮物？",
+                    "我們今天下午是要去圖書館看書，還是去公園騎車？",
+                    "下課時，操場上的同學有的在打球，有的在看書。"
+                ],
+                answer: "下課時，操場上的同學有的在打球，有的在看書。",
+                desc: "例句是表示二選一的「是…還是…」選擇句型。而「有的...有的...」是並列分述句型，故不同。"
+            },
+            {
+                id: "ls8",
+                grade: "low-mid",
+                example: "文具店裡有彩色的畫筆，也有實用的鐵尺。",
+                pattern: "有…也有…",
+                relation: "並列關係",
+                options: [
+                    "花園裡有紅色的玫瑰花，也有白色的百合花。",
+                    "書桌上有寫字的鉛筆，也有乾淨的記事本。",
+                    "這個小公園裡有高大的橡樹，也有美麗的小池塘。",
+                    "假如我有神奇的任意門，就可以一秒飛到日本。"
+                ],
+                answer: "假如我有神奇的任意門，就可以一秒飛到日本。",
+                desc: "例句是表示多種事物並存的「有…也有…」並列句型。而「假如...就...」是假設關係，故不同。"
+            },
+            {
+                id: "ls9",
+                grade: "low-mid",
+                example: "如果明天下大雨，我們就在家裡看故事書。",
+                pattern: "如果…就…",
+                relation: "假設關係",
+                options: [
+                    "如果你認真練習，就一定能學會騎雙輪腳踏車。",
+                    "如果肚子突然餓了，就先吃桌上這包小餅乾。",
+                    "如果能養成閱讀好習慣，就能讓寫作變得更簡單。",
+                    "妹妹不僅會彈鋼琴，也會畫漂亮的兔子圖畫。"
+                ],
+                answer: "妹妹不僅會彈鋼琴，也會畫漂亮的兔子圖畫。",
+                desc: "例句是前項為假定條件的「如果…就…」假設句型。而「不僅...也...」是遞進句型，故不同。"
+            },
+            {
+                id: "ls10",
+                grade: "low-mid",
+                example: "故事書不僅圖畫很精美，而且故事很有趣。",
+                pattern: "不僅…而且…",
+                relation: "遞進關係",
+                options: [
+                    "多吃綠色蔬菜不僅對身體很好，而且能讓我們更健康。",
+                    "小明不僅功課非常優秀，而且對每個人都很有禮貌。",
+                    "這家超市不僅水果很新鮮，而且價格非常便宜。",
+                    "自從上了三年級，我就學會了自己整理書包。"
+                ],
+                answer: "自從上了三年級，我就學會了自己整理書包。",
+                desc: "例句是表示程度加深的「不僅…而且…」遞進句型。而「自從...就...」是時間條件關係，故不同。"
+            },
+            {
+                id: "ls11",
+                grade: "low-mid",
+                example: "假如我有哆啦A夢的任意門，就可以一秒去日本玩。",
+                pattern: "假如…就…",
+                relation: "假設關係",
+                options: [
+                    "假如明天下大雪，我們就可以在院子裡堆雪人。",
+                    "假如我有一百萬，就想買好多故事書送給育幼院。",
+                    "假如我是科學家，就要發明會飛的跑車解決塞車。",
+                    "媽媽先在廚房洗好菜，接著開始大火快炒。"
+                ],
+                answer: "媽媽先在廚房洗好菜，接著開始大火快炒。",
+                desc: "例句是表示虛擬條件的「假如…就…」假設句型。而「接著」是時間承接關係，故不同。"
+            },
+            {
+                id: "ls12",
+                grade: "low-mid",
+                example: "妹妹不僅會彈鋼琴，也會畫漂亮的兔子圖畫。",
+                pattern: "不僅…也…",
+                relation: "遞進關係",
+                options: [
+                    "這座森林不僅有高大的松樹，也有許多可愛的小松鼠。",
+                    "這家文具店不僅賣好寫的原子筆，也賣畫畫用的彩色紙。",
+                    "小芳不僅功課好，也是一位樂於助人的好班長。",
+                    "你下課後到底是要去寫功課，還是要去睡覺？"
+                ],
+                answer: "你下課後到底是要去寫功課，還是要去睡覺？",
+                desc: "例句是表示進一步補充的「不僅…也…」遞進句型。而「是...還是...」是選擇關係，故不同。"
+            },
+
+            // ================= 高年級組 (high) =================
+            {
+                id: "s1",
+                grade: "high",
+                example: "即使天氣很冷，弟弟還是照常早起刷牙。",
+                pattern: "即使…還是…",
+                relation: "讓步轉折關係",
+                options: [
+                    "即使這道數學題很難，我還是想自己努力算算看。",
+                    "即使肚子再飽，妹妹還是吃得下最愛的巧克力冰淇淋。",
+                    "即使下著大雨，爸爸還是堅持騎車去上班。",
+                    "因為今天下大雨，所以我們取消了去公園的計畫。"
+                ],
+                answer: "因為今天下大雨，所以我們取消了去公園的計畫。",
+                desc: "例句使用的是表示讓步轉折關係的「即使…還是…」句型。而「因為今天下大雨...」是表示因果關係的句型，故句型不同。"
+            },
+            {
+                id: "s2",
+                grade: "high",
+                example: "媽媽先洗好菜，接著開始大火快炒。",
+                pattern: "…接著…",
+                relation: "承接關係",
+                options: [
+                    "老師發完考卷，接著仔細講解題目。",
+                    "我們先排隊上車，接著找好座位坐下。",
+                    "他先向大家敬禮，接著開始精采的演講。",
+                    "弟弟一邊唱歌，一邊開心地跳舞。"
+                ],
+                answer: "弟弟一邊唱歌，一邊開心地跳舞。",
+                desc: "例句使用的是表示動作先後順序的「…接著…」承接句型。而「弟弟一邊唱歌...」是表示同時進行的並列句型，故句型不同。"
+            },
+            {
+                id: "s3",
+                grade: "high",
+                example: "弟弟高興的手舞足蹈，因為他拿到了滿分的考卷。",
+                pattern: "…因為…",
+                relation: "因果關係（倒裝）",
+                options: [
+                    "小貓咪滿足地喵喵叫，因為牠吃到了最喜歡的罐頭。",
+                    "小女孩開心地笑了，因為媽媽買了新洋娃娃給她。",
+                    "我們今天提早出門，因為路上的交通很容易塞車。",
+                    "如果明天不下雨，我們就去動物園玩。"
+                ],
+                answer: "如果明天不下雨，我們就去動物園玩。",
+                desc: "例句使用的是先說明結果、再補充原因的倒裝「…因為…」因果句型。而「如果明天不下雨...」是假設關係句型，故句型不同。"
+            },
+            {
+                id: "s4",
+                grade: "high",
+                example: "你出門要帶雨傘，不然等一下下雨會淋成落湯雞。",
+                pattern: "…不然…",
+                relation: "假設選擇關係",
+                options: [
+                    "我們現在就要出發，不然會趕不上最早的那班公車。",
+                    "寫字時姿勢要端正，不然眼睛很容易就會近視。",
+                    "你要好好愛惜書本，不然書頁很快就會破掉。",
+                    "書包裡除了課本之外，還有一盒彩色筆。"
+                ],
+                answer: "書包裡除了課本之外，還有一盒彩色筆。",
+                desc: "例句使用的是表示條件警示的「…不然…」假設選擇句型。而「書包裡除了課本...」是表示遞進關係的句型，故句型不同。"
+            },
+            {
+                id: "s5",
+                grade: "high",
+                example: "爺爺一邊看報紙，一邊喝著溫熱的茶。",
+                pattern: "一邊…一邊…",
+                relation: "並列關係",
+                options: [
+                    "小朋友一邊聽著音樂，一邊開心地畫畫。",
+                    "媽媽一邊晾著衣服，一邊哼著好聽的歌。",
+                    "我們一邊慢跑，一邊欣賞著沿途美麗的風景。",
+                    "姐姐不但會彈鋼琴，甚至還會拉小提琴。"
+                ],
+                answer: "姐姐不但會彈鋼琴，甚至還會拉小提琴。",
+                desc: "例句使用的是表示兩個動作同時進行的「一邊…一邊…」並列句型。而「姐姐不但會彈鋼琴...」是更進一層的遞進關係句型，故句型不同。"
+            },
+            {
+                id: "s6",
+                grade: "high",
+                example: "姐姐主動把房間整理乾淨，並且把書本排整齊。",
+                pattern: "…並且…",
+                relation: "並列/遞進關係",
+                options: [
+                    "班長大聲讀出課文，並且提醒大家注意發音。",
+                    "這家餐廳的食物很好吃，並且服務態度非常親切。",
+                    "我們應該要多吃蔬菜，並且養成規律運動的習慣。",
+                    "即使功課再多，他還是會認真寫完。"
+                ],
+                answer: "即使功課再多，他還是會認真寫完。",
+                desc: "例句使用的是表示兩事並存或進一步結合的「…並且…」句型。而「即使功課再多...」是讓步轉折關係的句型，故句型不同。"
+            },
+            {
+                id: "s7",
+                grade: "high",
+                example: "書包裡除了有課本之外，還有一盒彩色的彩色筆。",
+                pattern: "除了…還…",
+                relation: "遞進關係",
+                options: [
+                    "這次生日派對，除了有美味的蛋糕，還有許多好玩的氣球。",
+                    "我的興趣很廣泛，除了打羽毛球，還喜歡彈鋼琴。",
+                    "這座公園裡，除了有高大的大樹，還有美麗的花園。",
+                    "因為天氣太熱了，所以大家都想去游泳吃冰。"
+                ],
+                answer: "because of the hot weather...", // 示意不同
+                answer: "因為天氣太熱了，所以大家都想去游泳吃冰。",
+                desc: "例句使用的是表示在一項事物外再作補充的「除了…還…」遞進句型。而「因為天氣太熱了...」是表示因果關係的句型，故句型不同。"
+            },
+            {
+                id: "s8",
+                grade: "high",
+                example: "小明不但會寫國字，甚至還會寫簡單的英文單字。",
+                pattern: "不但…甚至…",
+                relation: "遞進關係",
+                options: [
+                    "這隻流浪狗不但很溫和，甚至還會幫忙看顧小貓咪。",
+                    "妹妹不但把整碗飯吃光，甚至連盤子裡的配菜都吃乾淨了。",
+                    "這場大雨不但沒有停，甚至下得比剛才還要大。",
+                    "下課了，操場上的同學有的在打球，有的在跳繩。"
+                ],
+                answer: "下課了，操場上的同學有的在打球，有的在跳繩。",
+                desc: "例句使用的是表示更進一步發展的「不但…甚至…」遞進句型。而「下課了...有的...有的...」是分述並列句型，故句型不同。"
+            },
+            {
+                id: "s9",
+                grade: "high",
+                example: "閱讀課外書不僅能增加知識，更能豐富我們的想像力。",
+                pattern: "不僅…更…",
+                relation: "遞進關係",
+                options: [
+                    "運動不僅能讓我們身體健康，更能帶給我們快樂的心情。",
+                    "這次的校外教學不僅好玩，更讓我們學到許多自然常識。",
+                    "這本故事書不僅情節精彩，更有許多精美的插圖。",
+                    "你先洗完雙手，接著才能吃桌上的點心。"
+                ],
+                answer: "你先洗完雙手，接著才能吃桌上的點心。",
+                desc: "例句使用的是表示程度上更深一層的「不僅…更…」遞進句型。而「你先洗完雙手...接著...」是表示前後步驟的承接句型，故句型不同。"
+            },
+            {
+                id: "s10",
+                grade: "high",
+                example: "下課時，操場上的同學有的在打籃球，有的在跳繩。",
+                pattern: "有的…有的…",
+                relation: "並列關係",
+                options: [
+                    "抽屜裡的彩色筆，有的已經沒水了，有的還很新。",
+                    "花園裡盛開著許多花朵，有的紅如火焰，有的白如雪花。",
+                    "夜空中的星星，有的閃閃發光，有的躲在雲朵後面。",
+                    "如果你認真練習，就可以在比賽中得到好成績。"
+                ],
+                answer: "如果你認真練習，就可以在比賽中得到好成績。",
+                desc: "例句使用的是表示分組描述並立狀態的「有的…有的…」分述並列句型。而「如果你認真練習...」是假設關係句型，故句型不同。"
+            },
+            {
+                id: "s11",
+                grade: "high",
+                example: "如果你每天認真練習，就可以在比賽中拿到好成績。",
+                pattern: "如果…就可以…",
+                relation: "假設關係",
+                options: [
+                    "如果明天天氣晴朗，我們就可以去海邊沙灘堆城堡。",
+                    "如果把零用錢存起來，就可以買自己最想要的故事書。",
+                    "如果我們同心協力，就可以很快把教室打掃乾淨。",
+                    "爸爸一邊看著電視，一邊做著健身運動。"
+                ],
+                answer: "爸爸一邊看著電視，一邊做著健身運動。",
+                desc: "例句使用的是表示前項為假定條件，後項為結果的「如果…就可以…」假設關係句型。而「爸爸一邊看著電視...」是並列句型，故句型不同。"
+            }
+        ];
+
+        let activeScreen = 'home';
+        let currentGrade = 'low-mid'; // low-mid (中低年級), high (高年級)
+        let quizType = 'all'; // all, phrase, sentence
+        let currentQuizQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswersCount = 0;
+        let isAnswered = false;
+
+        window.onload = function() {
+            renderStudyCards();
+            updateUIByGrade();
+            goHome();
+        };
+
+        function setGrade(grade) {
+            if (currentGrade === grade) return;
+            currentGrade = grade;
+            updateUIByGrade();
+        }
+
+        // 更新介面年級狀態
+        function updateUIByGrade() {
+            const display = document.getElementById('slot-display');
+            const homeBadge = document.getElementById('home-grade-badge');
+            const phraseIntro = document.getElementById('phrase-intro-text');
+            const sentenceIntro = document.getElementById('sentence-intro-text');
+            const phraseCountBadge = document.getElementById('phrase-count-badge');
+            const sentenceCountBadge = document.getElementById('sentence-count-badge');
+            
+            const slider = document.getElementById('toggle-slider');
+            const lblLow = document.getElementById('label-low-mid');
+            const lblHigh = document.getElementById('label-high');
+
+            if (currentGrade === 'low-mid') {
+                // 標題與標籤文字
+                display.innerText = "🌱 中低年級組";
+                display.className = "font-black text-base text-yellow-300 tracking-wide";
+                
+                if (homeBadge) {
+                    homeBadge.innerText = "🌱 當前年段：中低年級組 (1-4 年級)";
+                    homeBadge.className = "bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-full inline-block";
+                }
+                
+                phraseIntro.innerText = "「一抹又一抹迷人的藍」、「一座座雪白的鹽山」，從生活中的疊詞積木，練習好玩對稱的短語。";
+                sentenceIntro.innerText = "「自從…就…」、「是…還是…」、「不僅…也…」，學會在各種情境中，放對連接詞。";
+                phraseCountBadge.innerText = "共 12 組中低年級短語";
+                sentenceCountBadge.innerText = "共 12 組中低年級句型";
+
+                // 左右拉滑塊位置調整 (中低偏左)
+                slider.style.transform = 'translateX(0px)';
+                slider.className = "absolute w-[64px] h-6 bg-emerald-400 rounded-full transition-all duration-300 ease-out shadow-md";
+                lblLow.className = "text-slate-900 font-extrabold transition-colors duration-300";
+                lblHigh.className = "text-white/60 font-semibold transition-colors duration-300";
+            } else {
+                // 標題與標籤文字
+                display.innerText = "🌲 高年級組";
+                display.className = "font-black text-base text-cyan-200 tracking-wide";
+                
+                if (homeBadge) {
+                    homeBadge.innerText = "🌲 當前年段：高年級組 (5-6 年級)";
+                    homeBadge.className = "bg-cyan-100 text-cyan-700 text-xs font-bold px-3 py-1.5 rounded-full inline-block";
+                }
+                
+                phraseIntro.innerText = "「窗前那棵魁梧的樹」、「一枚絢麗多姿的葉子」，剖析精緻的成語、數量詞與空間方位部件。";
+                sentenceIntro.innerText = "「即使…還是…」、「不但…甚至…」，靈活動用極具轉折、假設與遞進的高難度關聯句。";
+                phraseCountBadge.innerText = "共 12 組高年級短語";
+                sentenceCountBadge.innerText = "共 11 組高年級句型";
+
+                // 左右拉滑塊位置調整 (高年偏右)
+                slider.style.transform = 'translateX(68px)';
+                slider.className = "absolute w-[64px] h-6 bg-cyan-400 rounded-full transition-all duration-300 ease-out shadow-md";
+                lblLow.className = "text-white/60 font-semibold transition-colors duration-300";
+                lblHigh.className = "text-slate-900 font-extrabold transition-colors duration-300";
+            }
+
+            // 同步刷新學習卡片
+            renderStudyCards();
+            
+            // 給出精靈提示
+            showMascotTip(`已為您切換至「${currentGrade === 'low-mid' ? '中低年級組' : '高年級組'}」！🦉`);
+        }
+
+        // 切換畫面
+        function switchScreen(screenId) {
+            document.getElementById('screen-home').classList.add('hidden');
+            document.getElementById('screen-study').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+
+            document.getElementById(`screen-${screenId}`).classList.remove('hidden');
+            activeScreen = screenId;
+
+            if (screenId === 'home') {
+                showMascotTip("歡迎來到大廳！點擊右上角的滑動開關，就能隨時切換年段喔！🦉");
+            } else if (screenId === 'study') {
+                showMascotTip("這裡是例句祕笈大本營！快點擊下方的卡片來學習吧！🦉");
+            }
+        }
+
+        function goHome() {
+            switchScreen('home');
+        }
+
+        function renderStudyCards() {
+            const container = document.getElementById('study-cards-container');
+            container.innerHTML = '';
+
+            // 過濾出符合目前年級的短語
+            const filteredPhrases = PHRASE_DATA.filter(item => item.grade === currentGrade);
+            filteredPhrases.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = "study-card filter-item-phrase bg-white p-5 rounded-2xl border-2 border-emerald-100 hover:border-emerald-300 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded">🧩 短語結構 #${index+1}</span>
+                        </div>
+                        <h4 class="text-base font-black text-slate-800 border-b border-emerald-50 pb-2 mb-3">例：${item.example}</h4>
+                        <div class="space-y-1 text-xs">
+                            <p class="text-slate-400 font-semibold">🧩 零件結構：</p>
+                            <p class="text-slate-600 bg-slate-50 p-2 rounded-lg leading-relaxed font-mono">${item.structure}</p>
+                        </div>
+                        <div class="mt-4 space-y-2">
+                            <p class="text-xs text-slate-400 font-semibold">✨ 生活化延伸（3句）：</p>
+                            <ul class="text-xs text-emerald-800 space-y-1 bg-emerald-50/40 p-2.5 rounded-lg list-disc list-inside">
+                                <li>${item.options[0]}</li>
+                                <li>${item.options[1]}</li>
+                                <li>${item.options[2]}</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // 過濾出符合目前年級的句型
+            const filteredSentences = SENTENCE_DATA.filter(item => item.grade === currentGrade);
+            filteredSentences.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = "study-card filter-item-sentence hidden bg-white p-5 rounded-2xl border-2 border-teal-100 hover:border-teal-300 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-teal-50 text-teal-700 text-[10px] font-bold px-2 py-0.5 rounded">💡 生活句型 #${index+1}</span>
+                            <span class="text-[10px] text-teal-500 font-bold">${item.relation}</span>
+                        </div>
+                        <h4 class="text-base font-black text-slate-800 border-b border-teal-50 pb-2 mb-3">關鍵詞：${item.pattern}</h4>
+                        <div class="space-y-1 text-xs">
+                            <p class="text-slate-400 font-semibold">🏠 課本核心句：</p>
+                            <p class="text-slate-600 bg-slate-50 p-2 rounded-lg leading-relaxed">${item.example}</p>
+                        </div>
+                        <div class="mt-4 space-y-2">
+                            <p class="text-xs text-slate-400 font-semibold">✨ 生活化延伸（3句）：</p>
+                            <ul class="text-xs text-teal-800 space-y-1 bg-teal-50/40 p-2.5 rounded-lg list-disc list-inside">
+                                <li>${item.options[0]}</li>
+                                <li>${item.options[1]}</li>
+                                <li>${item.options[2]}</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // 保持目前選中的分類過濾狀態
+            const activeFilter = document.getElementById('btn-filter-phrase').classList.contains('bg-emerald-500') ? 'phrase' : 'sentence';
+            applyFilterToggle(activeFilter);
+        }
+
+        // 點擊學習大本營上方按鈕時的過濾行為
+        function filterStudy(type) {
+            applyFilterToggle(type);
+            if (type === 'phrase') {
+                showMascotTip("短語結構是寫作的基礎，一定要多讀熟記喔！🦉");
+            } else {
+                showMascotTip("句型連詞就像強大膠水，把零碎句子變得很美妙！🦉");
+            }
+        }
+
+        function applyFilterToggle(type) {
+            const btnPhrase = document.getElementById('btn-filter-phrase');
+            const btnSentence = document.getElementById('btn-filter-sentence');
+            
+            const cardsPhrase = document.querySelectorAll('.filter-item-phrase');
+            const cardsSentence = document.querySelectorAll('.filter-item-sentence');
+
+            if (type === 'phrase') {
+                btnPhrase.className = "px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-500 text-white shadow-md";
+                btnSentence.className = "px-4 py-2 rounded-xl text-xs font-bold transition-all text-emerald-700 hover:bg-emerald-100";
+                cardsPhrase.forEach(el => el.classList.remove('hidden'));
+                cardsSentence.forEach(el => el.classList.add('hidden'));
+            } else {
+                btnPhrase.className = "px-4 py-2 rounded-xl text-xs font-bold transition-all text-emerald-700 hover:bg-emerald-100";
+                btnSentence.className = "px-4 py-2 rounded-xl text-xs font-bold transition-all bg-teal-500 text-white shadow-md";
+                cardsPhrase.forEach(el => el.classList.add('hidden'));
+                cardsSentence.forEach(el => el.classList.remove('hidden'));
+            }
+        }
+
+        function startQuiz(type) {
+            quizType = type;
+            score = 0;
+            correctAnswersCount = 0;
+            currentQuestionIndex = 0;
+            isAnswered = false;
+            document.getElementById('live-score').innerText = "00";
+
+            // 根據年段和類型，過濾抽選題目
+            let filteredPhrases = PHRASE_DATA.filter(item => item.grade === currentGrade);
+            let filteredSentences = SENTENCE_DATA.filter(item => item.grade === currentGrade);
+
+            let sourceQuestions = [];
+            if (type === 'phrase') {
+                sourceQuestions = JSON.parse(JSON.stringify(filteredPhrases));
+            } else if (type === 'sentence') {
+                sourceQuestions = JSON.parse(JSON.stringify(filteredSentences));
+            } else {
+                sourceQuestions = [
+                    ...JSON.parse(JSON.stringify(filteredPhrases)),
+                    ...JSON.parse(JSON.stringify(filteredSentences))
+                ];
+            }
+
+            // 打亂題目順序並抽選
+            shuffleArray(sourceQuestions);
+            currentQuizQuestions = sourceQuestions.slice(0, 12); // 每輪上限 12 題
+
+            if (currentQuizQuestions.length === 0) {
+                showMascotTip("哎呀，這個年級段目前沒有題目喔！請更換年級試試看。🦉");
+                return;
+            }
+
+            switchScreen('quiz');
+            loadQuestion();
+        }
+
+        // 載入題目
+        function loadQuestion() {
+            isAnswered = false;
+            document.getElementById('feedback-panel').classList.add('hidden');
+            
+            const q = currentQuizQuestions[currentQuestionIndex];
+            
+            // 更新進度條
+            const total = currentQuizQuestions.length;
+            const progressPct = ((currentQuestionIndex + 1) / total) * 100;
+            document.getElementById('quiz-progress-label').innerText = `第 ${currentQuestionIndex + 1} / ${total} 題`;
+            document.getElementById('quiz-percentage-label').innerText = `完成 ${Math.round(progressPct)}%`;
+            document.getElementById('quiz-progress-bar').style.width = `${progressPct}%`;
+
+            // 辨識題型
+            const isPhrase = q.id.includes('p');
+            const badge = document.getElementById('quiz-badge');
+            if (isPhrase) {
+                badge.innerText = "🧩 短語結構辨析";
+                badge.className = "absolute top-4 right-4 bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full";
+                document.getElementById('quiz-question').innerText = `和例句「${q.example}」結構不同的是？`;
+            } else {
+                badge.innerText = "💡 生活句型辨析";
+                badge.className = "absolute top-4 right-4 bg-teal-100 text-teal-700 text-xs font-bold px-3 py-1 rounded-full";
+                document.getElementById('quiz-question').innerText = `和例句「${q.example}」句型不同的是？`;
+            }
+
+            // 產生隨機排序選項
+            const options = [...q.options];
+            shuffleArray(options);
+
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+
+            const letters = ['A', 'B', 'C', 'D'];
+            options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option-btn text-left p-4 rounded-2xl border-2 border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/20 active:scale-[0.98] transition-all duration-150 flex items-center space-x-3 bg-white w-full shadow-sm";
+                btn.onclick = () => selectOption(btn, opt, q.answer, q.desc);
+                btn.innerHTML = `
+                    <span class="option-letter bg-slate-100 text-slate-600 font-extrabold text-sm rounded-xl w-8 h-8 flex items-center justify-center shrink-0">${letters[idx]}</span>
+                    <span class="font-medium text-slate-700 text-sm md:text-base">${opt}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedBtn, chosenOpt, correctOpt, explanation) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const isCorrect = (chosenOpt === correctOpt);
+            playChime(isCorrect ? 'correct' : 'wrong');
+
+            const optionBtns = document.querySelectorAll('.quiz-option-btn');
+            optionBtns.forEach(btn => {
+                btn.disabled = true;
+                const optText = btn.querySelector('span:last-child').innerText;
+                const letterSpan = btn.querySelector('.option-letter');
+                
+                if (optText === correctOpt) {
+                    btn.className = "quiz-option-btn text-left p-4 rounded-2xl border-2 border-emerald-400 bg-emerald-50 flex items-center space-x-3 w-full shadow-md";
+                    letterSpan.className = "option-letter bg-emerald-500 text-white font-extrabold text-sm rounded-xl w-8 h-8 flex items-center justify-center shrink-0";
+                } else if (btn === selectedBtn && !isCorrect) {
+                    btn.className = "quiz-option-btn text-left p-4 rounded-2xl border-2 border-rose-400 bg-rose-50 flex items-center space-x-3 w-full shadow-md animate-shake";
+                    letterSpan.className = "option-letter bg-rose-500 text-white font-extrabold text-sm rounded-xl w-8 h-8 flex items-center justify-center shrink-0";
+                }
+            });
+
+            // 展現回饋面板
+            const feedbackPanel = document.getElementById('feedback-panel');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackDesc = document.getElementById('feedback-desc');
+
+            feedbackPanel.classList.remove('hidden');
+
+            if (isCorrect) {
+                correctAnswersCount++;
+                const stepScore = Math.round(100 / currentQuizQuestions.length);
+                score = Math.min(100, score + stepScore);
+                
+                if (currentQuestionIndex === currentQuizQuestions.length - 1 && correctAnswersCount === currentQuizQuestions.length) {
+                    score = 100;
+                }
+
+                document.getElementById('live-score').innerText = score.toString().padStart(2, '0');
+                feedbackPanel.className = "bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-5 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300";
+                feedbackIcon.innerText = "🎉";
+                feedbackTitle.innerText = "答對了！你真棒！";
+                feedbackTitle.className = "font-black text-emerald-700 text-base";
+            } else {
+                feedbackPanel.className = "bg-rose-50 border-2 border-rose-100 rounded-2xl p-5 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300";
+                feedbackIcon.innerText = "🤔";
+                feedbackTitle.innerText = "差一點點就答對囉！";
+                feedbackTitle.className = "font-black text-rose-700 text-base";
+            }
+            feedbackDesc.innerText = explanation;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < currentQuizQuestions.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            switchScreen('result');
+
+            const finalScore = Math.round((correctAnswersCount / currentQuizQuestions.length) * 100);
+            document.getElementById('result-score').innerText = finalScore;
+            document.getElementById('result-correct-count').innerText = `${correctAnswersCount} / ${currentQuizQuestions.length}`;
+            document.getElementById('result-accuracy').innerText = `${finalScore}%`;
+
+            const medal = document.getElementById('result-medal-emoji');
+            const title = document.getElementById('result-title');
+            const certInputArea = document.getElementById('cert-input-area');
+            const printBtn = document.getElementById('btn-print');
+            const certPaper = document.getElementById('print-area');
+
+            certPaper.classList.add('hidden');
+            printBtn.classList.add('hidden');
+
+            if (finalScore === 100) {
+                medal.innerText = "🏆";
+                title.innerText = "超級國語至尊神射手！";
+                showMascotTip("太不可思議了！你拿到了完美的 100 分！快點輸入姓名領取你的光榮獎狀！🦉");
+                startConfetti();
+                playChime('win');
+                certInputArea.classList.remove('hidden');
+            } else if (finalScore >= 80) {
+                medal.innerText = "🥇";
+                title.innerText = "國語句型小達人！";
+                showMascotTip("表現棒極了！獲得了超過 80 分的好成績，非常有實力！快領取獎狀吧！🦉");
+                startConfetti();
+                playChime('win');
+                certInputArea.classList.remove('hidden');
+            } else if (finalScore >= 60) {
+                medal.innerText = "🥈";
+                title.innerText = "語文冒險小勇士！";
+                showMascotTip("順利及格！再接再厲多練習幾次，你也可以挑戰完美滿分喔！🦉");
+                certInputArea.classList.remove('hidden');
+            } else {
+                medal.innerText = "🪵";
+                title.innerText = "再接再厲，潛力無限！";
+                showMascotTip("沒關係，多去「學習大本營」看看卡片複習一下，一定會進步的！🦉");
+                certInputArea.classList.add('hidden');
+            }
+        }
+
+        function generateCertificate() {
+            const nameInput = document.getElementById('student-name');
+            const name = nameInput.value.trim();
+            if (!name) {
+                showMascotTip("親愛的小朋友，要先輸入姓名才能獲得證書唷！🦉");
+                return;
+            }
+
+            document.getElementById('cert-name').innerText = name;
+            document.getElementById('cert-score').innerText = `${document.getElementById('result-score').innerText}分`;
+            
+            const today = new Date();
+            document.getElementById('cert-date').innerText = `發證日期：${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+
+            document.getElementById('print-area').classList.remove('hidden');
+            document.getElementById('btn-print').classList.remove('hidden');
+            
+            document.getElementById('print-area').scrollIntoView({ behavior: 'smooth' });
+            showMascotTip("哇！專屬獎狀為你製作完成，點選下方印表機，就能印出獎狀網頁囉！🦉");
+        }
+
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playChime(type) {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'correct') {
+                    // 大三和弦 C 向上爬升
+                    playTone(ctx, 523.25, now, 0.1, 'sine');       // C5
+                    playTone(ctx, 659.25, now + 0.08, 0.1, 'sine');  // E5
+                    playTone(ctx, 783.99, now + 0.16, 0.12, 'sine'); // G5
+                    playTone(ctx, 1046.50, now + 0.24, 0.25, 'sine');// C6
+                } else if (type === 'wrong') {
+                    // 溫和不和諧小二度，不傷自尊
+                    playTone(ctx, 311.13, now, 0.15, 'sawtooth');      // Eb4
+                    playTone(ctx, 293.66, now + 0.12, 0.25, 'sawtooth'); // D4
+                } else if (type === 'win') {
+                    // 勝利大慶典和弦
+                    const notes = [523.25, 523.25, 659.25, 783.99, 880.00, 1046.50];
+                    const times = [0, 0.1, 0.2, 0.3, 0.45, 0.6];
+                    notes.forEach((freq, idx) => {
+                        playTone(ctx, freq, now + times[idx], 0.3, 'sine');
+                    });
+                }
+            } catch(e) {}
+        }
+
+        function playTone(ctx, frequency, start, duration, type = 'sine') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(frequency, start);
+            
+            gain.gain.setValueAtTime(0, start);
+            gain.gain.linearRampToValueAtTime(0.18, start + 0.02);
+            gain.gain.linearRampToValueAtTime(0, start + duration);
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            osc.start(start);
+            osc.stop(start + duration + 0.05);
+        }
+
+        let confettiAnimationId = null;
+        function startConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.classList.remove('hidden');
+
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const colors = ['#f87171', '#fb923c', '#fbbf24', '#34d399', '#2dd4bf', '#60a5fa', '#a78bfa', '#f472b6'];
+            const particles = [];
+
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * -height - 20,
+                    r: Math.random() * 6 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: Math.random() * 4 - 2,
+                    vy: Math.random() * 5 + 4,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 10 - 5
+                });
+            }
+
+            let frames = 0;
+            function update() {
+                ctx.clearRect(0, 0, width, height);
+
+                particles.forEach(p => {
+                    p.y += p.vy;
+                    p.x += p.vx + Math.sin(frames / 30) * 0.5;
+                    p.rotation += p.rotationSpeed;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.r, -p.r/2, p.r*2, p.r);
+                    ctx.restore();
+
+                    if (p.y > height) {
+                        p.y = -20;
+                        p.x = Math.random() * width;
+                    }
+                });
+
+                frames++;
+                
+                if (frames < 350) {
+                    confettiAnimationId = requestAnimationFrame(update);
+                } else {
+                    ctx.clearRect(0, 0, width, height);
+                    canvas.classList.add('hidden');
+                    cancelAnimationFrame(confettiAnimationId);
+                }
+            }
+
+            if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
+            update();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        let mascotTimer = null;
+        function showMascotTip(msg) {
+            const toast = document.getElementById('mascot-toast');
+            const msgEl = document.getElementById('mascot-msg');
+            
+            msgEl.innerText = msg;
+            
+            toast.classList.remove('scale-0', 'translate-y-[-20px]', 'opacity-0');
+            toast.classList.add('scale-100', 'translate-y-0', 'opacity-100');
+
+            if (mascotTimer) clearTimeout(mascotTimer);
+            mascotTimer = setTimeout(() => {
+                toast.classList.remove('scale-100', 'translate-y-0', 'opacity-100');
+                toast.classList.add('scale-0', 'translate-y-[-20px]', 'opacity-0');
+            }, 6000);
+        }
+
+        function triggerMascotTip() {
+            const tips = [
+                "「因為」後面接的是原因，「所以」後面接的是結果，別搞混了喔！🦉",
+                "「一邊…一邊…」表示兩件事情同時進行，比如不能一邊睡覺一邊跑步喔！🦉",
+                "遇到難題時，閉上眼睛深呼吸，找出句子裡的詞性，你就成功一半了！🦉",
+                "拿到滿分可以獲得精美證書，快點挑戰看看吧！🦉",
+                "點擊右上角的年段開關，就能輕鬆切換中低年級和高年級的內容！🦉"
+            ];
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            showMascotTip(randomTip);
+        }
+    </script>
+</body>
+</html>
