@@ -6,6 +6,7 @@
    <title>國小國語短語與句型辨析挑戰 - 語文積木版</title>
    <script src="https://cdn.tailwindcss.com"></script>
    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
    <style>
        body {
            font-family: 'Noto Sans TC', 'Fredoka One', sans-serif;
@@ -56,6 +57,10 @@
                 top: 0;
                 width: 100%;
            }
+       }
+       /* 微調動態生成的 QR Code 樣式，確保內建圖片居中 */
+       #lobby-qrcode img {
+           margin: 0 auto;
        }
    </style>
 </head>
@@ -130,9 +135,9 @@
                         這是一個專為國小同學打造的語文學習世界！你可以利用右上角的「年段切換開關」切換中低年級或高年級。點擊「學習大本營」研讀例句，再進入挑戰爭取 100 分榮譽獎狀吧！
                     </p>
                     
-                    <div class="bg-white p-4 rounded-2xl border-2 border-emerald-100 shadow-sm flex flex-col items-center max-w-[180px] transition-all hover:shadow-md">
-                        <img id="lobby-qrcode" src="" alt="網頁 QR Code" class="w-32 h-32 opacity-90">
-                        <span class="text-[11px] text-emerald-600 font-bold mt-2 flex items-center gap-1">
+                    <div class="bg-white p-4 rounded-2xl border-2 border-emerald-100 shadow-sm flex flex-col items-center min-w-[160px] transition-all hover:shadow-md">
+                        <div id="lobby-qrcode" class="w-32 h-32 flex items-center justify-center"></div>
+                        <span class="text-[11px] text-emerald-600 font-bold mt-2 flex items-center gap-1 select-none">
                             📷 智慧型裝置掃描挑戰
                         </span>
                     </div>
@@ -421,7 +426,7 @@
                 structure: "主詞 ＋是 ＋名詞複數(們) ＋ 的＋ 隱喻名詞",
                 options: ["森林是小鳥們的遊樂園", "學校是學生們的知識庫", "地球是人類們的大家庭", "我們開心的在教室上課"],
                 answer: "我們開心的在教室上課",
-                desc: "「枯木是動物們的大飯店']是【A是B們的C】結構的隱喻判斷句。「我們開心的在教室上課」是一般的主謂動作句，結構不同。"
+                desc: "「枯木是動物們的大飯店」是【A是B們的C】結構的隱喻判斷句。「我們開心的在教室上課」是一般的主謂動作句，結構不同。"
            },
            {
                 id: "lp11",
@@ -733,7 +738,7 @@
                     "你下課後到底是要去寫功課，還是要去睡覺？"
                 ],
                 answer: "你下課後到底是要去寫功課，還是要去睡覺？",
-                desc: "例句是表示進一步補充的「不僅…也…」遞進句型。而「是...還是...」是選擇關係，故不同。"
+                desc: "例句是表示進一步補充的「不僅…也…」遞進句型。而「是...還是...」是選擇關係，故不同("
            },
  
            // ================= 高年級組 (high) =================
@@ -747,7 +752,7 @@
                     "即使這道數學題很難，我還是想自己努力算算看。",
                     "即使肚子再飽，妹妹還是吃得下最愛的巧克力冰淇淋。",
                     "即使下著大雨，爸爸還是堅持騎車去上班。",
-                    "因為今天下大雨，所以我們取消了去公園的計畫。"
+                    "開為今天下大雨，所以我們取消了去公園的計畫。"
                 ],
                 answer: "因為今天下大雨，所以我們取消了去公園的計畫。",
                 desc: "例句使用的是表示讓步轉折關係的「即使…還是…」句型。而「因為今天下大雨...」是表示因果關係的句型，故句型不同。"
@@ -759,7 +764,7 @@
                 pattern: "…接著…",
                 relation: "承接關係",
                 options: [
-                    "老師發完考卷，接著仔細講解題目。",
+                    "老師發完考卷，接著仔計講解題目。",
                     "我們先排隊上車，接著找好座位坐下。",
                     "他先向大家敬禮，接著開始精采的演講。",
                     "弟弟一邊唱歌，一邊開心地跳舞。"
@@ -846,7 +851,7 @@
                 id: "s8",
                 grade: "high",
                 example: "小明不但會寫國字，甚至還會寫簡單的英文單字。",
-                pattern: "不但…甚至…",
+                pattern: "慢旦…甚至…",
                 relation: "遞進關係",
                 options: [
                     "這隻流浪狗不但很溫和，甚至還會幫忙看顧小貓咪。",
@@ -914,10 +919,16 @@
        let isAnswered = false;
  
        window.onload = function() {
-           // 動態獲取當前網頁網址並生成 QR Code
+           // 獲取當前網頁網址並純前端動態渲染 QR Code (128x128 像素)
            const currentUrl = window.location.href;
-           const qrCodeImg = document.getElementById('lobby-qrcode');
-           qrCodeImg.src = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(currentUrl)}&choe=UTF-8`;
+           new QRCode(document.getElementById("lobby-qrcode"), {
+               text: currentUrl,
+               width: 128,
+               height: 128,
+               colorDark : "#0f172a", // 採用深 slate 色，與原網頁文字呼應
+               colorLight : "#ffffff",
+               correctLevel : QRCode.CorrectLevel.H
+           });
 
            renderStudyCards();
            updateUIByGrade();
